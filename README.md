@@ -5,7 +5,7 @@
 </br>well you are at the right place!!
 
 ## Features
-
+![alt text](https://github.com/varunpanchal283/Re-Manga/blob/main/img/remanga.PNG?raw=true)
 - Beautiful command line interface to interact with re-manga where you have got lots of options to choose.
 - A search engine where u can have a list of desired manga you want.
 - A Download-Manager which downloads manga in pdf format.
