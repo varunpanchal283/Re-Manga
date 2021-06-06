@@ -24,8 +24,5 @@ def get_chapter(url):
 	for (link,chapter) in dat:
 		t.add_row([k,chapter])
 		chapterlink[k]=link
-		if ".5" in chapter:
-			k=k+0.5
-		else:
-			k+=1
+		k+=1
 	print(t)

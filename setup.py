@@ -7,7 +7,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='re-manga',
-    version='0.0.2',
+    version='0.2.0',
     author='Varun Panchal',
     author_email='varunpanchal283@gmail.com',
     description='Get your favourite manga in pdf',
