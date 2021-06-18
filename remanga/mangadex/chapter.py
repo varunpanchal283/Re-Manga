@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from prettytable import PrettyTable
 
 chapterlink={}
+chaptername={}
 
 def get_chapter(url):
 	r=requests.get(url).text
@@ -24,5 +25,7 @@ def get_chapter(url):
 	for (link,chapter) in dat:
 		t.add_row([k,chapter])
 		chapterlink[k]=link
+		chaptername[k]=chapter
 		k+=1
+	t.align='l'
 	print(t)

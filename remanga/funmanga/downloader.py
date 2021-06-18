@@ -1,9 +1,9 @@
 import requests
 import os
 from bs4 import BeautifulSoup
+from PIL import Image
 import shutil
 import time
-from PIL import Image
 import re
 import threading
 import sys
@@ -24,15 +24,15 @@ def download(url,directory,filename):
 	temp_fold=os.path.normpath(temp_fold)
 	if not os.path.exists(temp_fold):
 		os.makedirs(temp_fold)
-	r=requests.get(url).text
-	soup=BeautifulSoup(r,'html.parser').find_all('img',attrs={'class':'noselect nodrag cursor-pointer img-loading'})
+	r=requests.get(url+"/all-pages").text
+	soup=BeautifulSoup(r,'html.parser').find_all('img',attrs={'class':'img-responsive'})
 	k=1
 	files=[]
 	x=0
 	t=threading.Thread(target=progress)
 	t.start()
 	for i in soup:
-		down_url=i.get('data-src')
+		down_url="https:"+i.get('src')
 		if "\\" in temp_fold:
 			imgpath=temp_fold+"\\"+str(k)+".jpg"
 		else:
@@ -58,5 +58,3 @@ def download(url,directory,filename):
 		image[0].save(directory+filename+".pdf", "PDF" ,resolution=100.0, save_all=True, append_images=image)
 	shutil.rmtree(temp_fold)
 	print(filename[1:]+" Downloaded Successfully")
-
-

@@ -1,7 +1,7 @@
 import requests
 import os
 from bs4 import BeautifulSoup
-import img2pdf
+from PIL import Image
 import shutil
 import time
 import re
@@ -18,7 +18,7 @@ def progress():
 		i+=1
 		time.sleep(0.5)
 
-def download(url,directory):
+def download(url,directory,filename):
 	global x
 	temp_fold=os.getcwd()+"/temp/"
 	temp_fold=os.path.normpath(temp_fold)
@@ -43,15 +43,19 @@ def download(url,directory):
 		k=k+1
 	x=1
 	print("\nAlmost Done...Finishing the process")
-	filename=re.search('/chapter/(.*)',url).group()[9:]
 	for i in ['/','\\','*','<','>','|','?',':','"']:
 		filename=filename.replace(i," ")
 	if "\\" in temp_fold:
 		filename="\\"+filename
 	else:
 		filename="/"+filename
-	with open(directory+filename+".pdf", "wb") as f:
-		f.write(img2pdf.convert([i for i in files if i.endswith(".jpg")]))
+	image=[]
+	for i in range(len(files)):
+		image.append(Image.open(files[i]))
+	if len(image)!=1:
+		image[0].save(directory+filename+".pdf", "PDF" ,resolution=100.0, save_all=True, append_images=image[1:])
+	else:
+		image[0].save(directory+filename+".pdf", "PDF" ,resolution=100.0, save_all=True, append_images=image)
 	shutil.rmtree(temp_fold)
 	print(filename[1:]+" Downloaded Successfully")
 

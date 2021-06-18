@@ -7,31 +7,113 @@ from pprint import pprint
 from PyInquirer import style_from_dict, Token, prompt
 from PyInquirer import Validator, ValidationError
 import os
+import click
 import requests
 from pathlib import Path
+from configparser import ConfigParser 
 
 from . import mangadex
 from . import manganelo
+from . import funmanga
 from .mangadex import (data,chapter,downloader)
 from .manganelo import (data,chapter,downloader)
+from .funmanga import (data,chapter,downloader)
 
-server={1:manganelo,2:mangadex}
+server={1:funmanga,2:manganelo,3:mangadex}
+
+def url_validate(url):
+	global service
+	if "mangadex" in url:
+		service=3
+	elif "manganelo" in url:
+		service=2
+	else:
+		exit("invalid url\
+			 Supported Websites are 1: Mangadex.tv\n2. Manganelo.tv\n")
+
+def down_dir(directory):
+	if directory=="":
+		download_dir=str(os.path.join(Path.home(), "Downloads"))
+		download_dir=os.path.normpath(download_dir)
+	else:
+		download_dir=directory
+		download_dir=os.path.normpath(download_dir)
+		if not os.path.exists(download_dir):
+			print("Path doesnot exists")
+			exit()
+	return download_dir
+
+
+def parse():
+	global service
+	global downdir
+	loc=click.get_app_dir('remanga')
+	if not os.path.exists(loc):
+		os.makedirs(loc)
+	downdir= [str(os.path.join(Path.home(), "Downloads"))]
+	if "/" in downdir:
+		file = loc+"/config.ini"
+	else:
+		file=loc+"\\config.ini"
+	if not os.path.exists(file):
+		with open(file, 'w') as f:
+			f.write("[download_directory]\n")
+			f.write("directory = ")
+	config=ConfigParser()
+	config.read(file)
+	if config.get('download_directory','directory')!="":
+		downdir=[config.get('download_directory','directory')]
+	parser=argparse.ArgumentParser(prog="re-manga",description="Manga Downloader")
+	parser.add_argument('-download','-d',dest="download",nargs=1,type=str,help="will download anime")
+	parser.add_argument('-dir',dest="directory",nargs=1,type=str,help="Download directory",default=downdir)
+	parser.add_argument('-fn',dest="filename",nargs=1,type=str,help="File Name")
+	parser.add_argument('-changedir',dest="downloaddir",nargs=1,type=str,help="Change default download directory")
+	args=parser.parse_args()
+	if args.download:
+		url_validate(args.download[0])
+		down_dir(args.directory[0])
+		if "chapter" in args.download[0]:
+			if args.filename:
+				server[service].downloader.download(args.download[0],down_dir(args.directory[0]),args.filename[0])
+			else:
+				exit("please enter file name!!!")
+		else:
+			server[service].chapter.get_chapter(args.download[0])
+			print("The above chapters will be downloaded")
+			x=server[service].chapter.chapterlink
+			for i in x:
+				server[service].downloader.download(x[i],down_dir(args.directory[0]),server[service].chapter.chaptername[i])
+		exit("Enjoy;)")
+
+	elif args.downloaddir:
+		temp_dir=down_dir(args.downloaddir[0])
+		config.set('download_directory','directory',temp_dir)
+		with open(file, 'w') as configfile:
+			config.write(configfile)
+		exit("The Default download directory has changed to "+temp_dir)
+
 
 def serv():
 	global service
 	t=PrettyTable(['Code','Domain','status'])
 	try:
+		r=requests.get("https://funmanga.com")
+		work="working"
+	except:
+		work="not working"
+	t.add_row([1,'funmanga',work])
+	try:
 		r=requests.get("https://manganelo.tv")
 		work="working"
 	except:
 		work="not working"
-	t.add_row([1,'manganelo',work])
+	t.add_row([2,'manganelo',work])
 	try:
 		r=requests.get("https://mangadex.tv")
 		work="working"
 	except:
 		work="not working"
-	t.add_row([2,'mangadex',work])
+	t.add_row([3,'mangadex',work])
 	print(t)
 	question=[
 	{
@@ -119,6 +201,7 @@ def validate(ch):
 
 def downdir():
 	global download_dir
+	global downdir
 	question=[
 	{
 		'type':'input',
@@ -127,15 +210,14 @@ def downdir():
 	}]
 	keyword=prompt(question,style=style)
 	if keyword.get('directory')=="":
-		download_dir=str(os.path.join(Path.home(), "Downloads"))
-		download_dir=os.path.normpath(download_dir)
+		download_dir=downdir[0]
 	else:
 		download_dir=keyword.get('directory')
 		download_dir=os.path.normpath(download_dir)
 		if not os.path.exists(download_dir):
 			print("Path doesnot exists")
 			exit()
-
+			
 def finish():
 	global download_dir
 	global service
@@ -143,7 +225,8 @@ def finish():
 	for i in chapters:
 		for j in range(int(i[0]),int(i[1])+1):
 			url=server[service].chapter.chapterlink.get(j)
-			server[service].downloader.download(url,download_dir)
+			filename=server[service].chapter.chaptername.get(j)
+			server[service].downloader.download(url,download_dir,filename)
 
 
 

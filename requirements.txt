@@ -3,4 +3,4 @@ requests==2.18.4
 PyInquirer==1.0.3
 prettytable==2.1.0
 pyfiglet==0.8.post1
-img2pdf==0.4.1
+click==7.1.2

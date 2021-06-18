@@ -25,4 +25,5 @@ def get_data(anime):
 			dic[k]="https://mangadex.tv"+i.get('href')
 			t.add_row([k,i.text])
 			k=k+1
+	t.align='l'
 	print(t)

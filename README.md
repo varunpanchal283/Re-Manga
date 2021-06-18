@@ -15,9 +15,18 @@
 - It's a standalone tool, it doesn't need any external requirements except pypi packages.
 - To install this project run `pip install re-manga` 
 
-           
+## CLI Commands
+
+- There are a total of 4 arguments 
+- To change default download directory use `-changedir` followed by path
+- To download manga use `-d` followed by manganelo.tv | mangadex.tv link
+- File name is mandatory to set it use `-fn` followed by filename without extension
+- To give temperory download directory use `-dir` followed by path
+
+
 ## Provider
 
+- funmanga
 - mangadex
 - manganelo
 

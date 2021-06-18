@@ -25,4 +25,5 @@ def get_data(anime):
 			dic[k]="https://manganelo.tv"+i.get('href')
 			t.add_row([k,i.get('title')])
 			k=k+1
+	t.align='l'
 	print(t)
