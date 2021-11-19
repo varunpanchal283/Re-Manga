@@ -15,18 +15,22 @@ from configparser import ConfigParser
 from . import mangadex
 from . import manganelo
 from . import funmanga
+from . import readm
 from .mangadex import (data,chapter,downloader)
 from .manganelo import (data,chapter,downloader)
 from .funmanga import (data,chapter,downloader)
+from .readm import (data,chapter,downloader)
 
-server={1:funmanga,2:manganelo,3:mangadex}
+server={1:readm,2:funmanga,3:manganelo,4:mangadex}
 
 def url_validate(url):
 	global service
 	if "mangadex" in url:
-		service=3
+		service=4
 	elif "manganelo" in url:
-		service=2
+		service=3
+	elif "readm" in url:
+		service=1
 	else:
 		exit("invalid url\
 			 Supported Websites are 1: Mangadex.tv\n2. Manganelo.tv\n")
@@ -95,25 +99,11 @@ def parse():
 
 def serv():
 	global service
-	t=PrettyTable(['Code','Domain','status'])
-	try:
-		r=requests.get("https://funmanga.com")
-		work="working"
-	except:
-		work="not working"
-	t.add_row([1,'funmanga',work])
-	try:
-		r=requests.get("https://manganelo.tv")
-		work="working"
-	except:
-		work="not working"
-	t.add_row([2,'manganelo',work])
-	try:
-		r=requests.get("https://mangadex.tv")
-		work="working"
-	except:
-		work="not working"
-	t.add_row([3,'mangadex',work])
+	t=PrettyTable(['Code','Domain'])
+	t.add_row([1,'readm'])
+	t.add_row([2,'funmanga'])
+	t.add_row([3,'manganelo'])
+	t.add_row([4,'mangadex'])
 	print(t)
 	question=[
 	{

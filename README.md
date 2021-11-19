@@ -26,6 +26,7 @@
 
 ## Provider
 
+- readm
 - funmanga
 - mangadex
 - manganelo
